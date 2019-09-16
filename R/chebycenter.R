@@ -2,6 +2,7 @@
 #' This code is a translation of the matlab code developped by Tim Bernham - University of Queensland
 #' (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
 #' It computes the centroid of the complex polytope defined by \eqn{A \cdot x \leqslant   b}
+#'
 #' @param A a matrix
 #' @param b a vector of length equals to nrow(A)
 #'
@@ -38,7 +39,7 @@ chebycenter <- function(A, b) {
 
 
   d <-
-    solveLP(
+    linprog::solveLP(
       cvec = f,
       bvec = as.numeric(b),
       Amat = A1,

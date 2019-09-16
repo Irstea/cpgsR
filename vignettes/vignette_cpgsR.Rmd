@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(cpgsR)
 ```
 This package aims at uniformly sampling points in a complex polytope defined by the inequalities \eqn{A \cdot x \leqslant   b}. It is based on an original matlab code from Tim Bernham - University of Queensland
 <https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope>. The package provides two functions:
@@ -20,8 +21,7 @@ This package aims at uniformly sampling points in a complex polytope defined by 
 
 To illustrate the usage of the package, we are going to sample in a hypercube with 50 dimensions ranging from 0 to 1.
 
-```{r setup}
-library(cpgsR)
+```{r}
 n <- 20
 A1 <- -diag(n)
 b1 <- as.matrix(rep(0,n))
@@ -34,21 +34,25 @@ b <- rbind(b1,b2) #the bounds vector
 Now, we need to provide an intial point. For this purpose, we use the function \code{\link{chebycenter}} as follows:
 
 ```{r}
-library(cpgsR)
 n <- 20
 A1 <- -diag(n)
 b1 <- as.matrix(rep(0,n))
 A2 <- diag(n)
 b2 <- as.matrix(rep(1,n))
-A <- rbind(A1,A2) //the coefficent matrix
+A <- rbind(A1,A2) #the coefficent matrix
 X0 <- chebycenter(A,b)
 print(X0)
 ```
 
 We see that, in our simple example, the centroid is the point with 0.5 in all dimensions. We can now carry out the sampling using the \code{\link{cpgs}}:
 
-```{r}
+```{r, results="hide"}
 library(cpgsR)
+x <- cpgs(1000,A,b,X0)
+```
+
+```{r}
+par(mfrow=c(1,2))
 hist(x[,1],50)
 plot(x[,1],type='l',main=1)
 ```
@@ -320,6 +324,7 @@ We can now compare the sampling using example from the \code{\link{[limSolve]xsa
 
 
 ```{r}
+library(limSolve)
 #test
 E <- rbind(Minkdiet$Prey, rep(1, 7))
 F <- c(Minkdiet$Mink, 1)
@@ -333,7 +338,7 @@ print(end-debut)
 
 #new way
 debut=Sys.time()
-res2=xsampleHD(E = E, F = F, G = diag(7), H = rep(0, 7), iter = 50000,
+res2=xsampleCPGS(E = E, F = F, G = diag(7), H = rep(0, 7), iter = 50000,
                output = 1000, type = "cpgs")$X
 end=Sys.time()
 print(end-debut)
