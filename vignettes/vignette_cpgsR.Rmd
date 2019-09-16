@@ -10,7 +10,9 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width=16/2.54,
+  fig.height=10/2.54
 )
 library(cpgsR)
 ```
@@ -52,7 +54,7 @@ x <- cpgs(1000,A,b,X0)
 ```
 
 ```{r}
-par(mfrow=c(1,2))
+par(mfrow=c(1,2),mar=c(2.5,2.5,1.5,.5),mgp=c(1.5,.5,0))
 hist(x[,1],50)
 plot(x[,1],type='l',main=1)
 ```
