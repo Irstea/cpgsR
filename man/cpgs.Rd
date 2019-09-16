@@ -2,10 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{cpgs}
 \alias{cpgs}
-\title{Complex Polytope Gibbs Sampling
-This function is based on an initial matlab code developped by Tim Bernham - University of Queensland
-(https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
-It generates samples within the complex polytope defined by \eqn{A \cdot x \leqslant   b}}
+\title{Complex Polytope Gibbs Sampling}
 \usage{
 cpgs(N, A, b, x0)
 }
@@ -22,7 +19,6 @@ cpgs(N, A, b, x0)
 a matrix with one row per sample and one column per parameter
 }
 \description{
-Complex Polytope Gibbs Sampling
 This function is based on an initial matlab code developped by Tim Bernham - University of Queensland
 (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
 It generates samples within the complex polytope defined by \eqn{A \cdot x \leqslant   b}

@@ -11,6 +11,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 //' Complex Polytope Gibbs Sampling
+//'
 //' This function is based on an initial matlab code developped by Tim Bernham - University of Queensland
 //' (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
 //' It generates samples within the complex polytope defined by \eqn{A \cdot x \leqslant   b}
