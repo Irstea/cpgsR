@@ -2,14 +2,17 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' Complex Polytope Gibbs Sampling
+#' This function draw uniform samples in a convex polytope
 #'
-#' This function is based on an initial matlab code developped by Tim Bernham - University of Queensland
-#' (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
-#' It generates samples within the complex polytope defined by \eqn{A \cdot x \leqslant   b}
 #' @param N the number of samples to generate
 #' @param A a matrix
 #' @param b a vector of length equals to nrow(A)
 #' @param x0 a vector of length equals to nrcol(A) that should be in the polytope, for example returned by \code{\link{chebycenter}}
+#'
+#' @section Details:
+#' This function is based on an initial matlab code developped by Tim Bernham - University of Queensland
+#' (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
+#' It generates samples within the complex polytope defined by \eqn{A \cdot x \leqslant   b}
 #'
 #' @return a matrix with one row per sample and one column per parameter
 #' @examples

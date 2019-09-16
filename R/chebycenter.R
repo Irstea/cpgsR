@@ -1,14 +1,18 @@
 #' chebycenter
-#'
-#' This code is a translation of the matlab code developped by Tim Bernham - University of Queensland
-#' (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
-#' It computes the centroid of the complex polytope defined by \eqn{A \cdot x \leqslant   b}
+#' Computes the centroid of a convex polytope
 #'
 #' @param A a matrix
 #' @param b a vector of length equals to nrow(A)
 #'
+#' @section Details:
+#' This code is a translation of the matlab code developped by Tim Bernham - University of Queensland
+#' (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
+#' It computes the centroid of the complex polytope defined by \eqn{A \cdot x \leqslant   b}
+#'
 #' @return a vector corresponding to the centroid of the polytope
+#'
 #' @importFrom linprog solveLP
+#'
 #' @examples
 #' n <- 20
 #' A1 <- -diag(n)

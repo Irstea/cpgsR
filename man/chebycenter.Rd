@@ -2,7 +2,8 @@
 % Please edit documentation in R/chebycenter.R
 \name{chebycenter}
 \alias{chebycenter}
-\title{chebycenter}
+\title{chebycenter
+Computes the centroid of a convex polytope}
 \usage{
 chebycenter(A, b)
 }
@@ -15,10 +16,16 @@ chebycenter(A, b)
 a vector corresponding to the centroid of the polytope
 }
 \description{
+chebycenter
+Computes the centroid of a convex polytope
+}
+\section{Details}{
+
 This code is a translation of the matlab code developped by Tim Bernham - University of Queensland
 (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
 It computes the centroid of the complex polytope defined by \eqn{A \cdot x \leqslant   b}
 }
+
 \examples{
 n <- 20
 A1 <- -diag(n)
