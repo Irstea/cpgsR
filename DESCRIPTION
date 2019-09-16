@@ -1,0 +1,22 @@
+Package: cpgsR
+Type: Package
+Title: Uniform sampling in convex polytope
+Version: 0.1.0
+Authors@R: c(person("Hilaire","Drouineau",email="hilaire.drouineau@irstea.fr",role=c("aut","cre")),
+    person("Benjamin","Planque",role=c("aut")),
+    person("Irstea - Norvegian Institute of Marine Research",role=("cph")))
+Date: 2019-09-16
+Description: This packages aims at sampling points in convex polytopes. The code is based on the matlab code provided by Tim Benham (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope).
+License: LGPL-3
+LinkingTo: Rcpp, RcppEigen
+Imports: 
+    Rcpp (>= 1.0.1),
+    RcppEigen (>= 0.3.3.5.0),
+    linprog
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    ggplot2,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
