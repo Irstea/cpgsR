@@ -2,6 +2,7 @@
 #include <RcppEigen.h>
 #include <Eigen/Cholesky>
 
+// [[Rcpp::depends(RcppEigen)]]
 
 using namespace Rcpp;
 using namespace RcppEigen;
@@ -17,10 +18,9 @@ using Eigen::VectorXd;
 //' @param A a matrix
 //' @param b a vector of length equals to nrow(A)
 //' @param x0 a vector of length equals to nrcol(A) that should be in the polytope, for example returned by \code{\link{chebycenter}}
-//' @param verbose flag to display progress bar
 //'
 //' @return a matrix with one row per sample and one column per parameter
-//' @example
+//' @examples
 //' n <- 20
 //' A1 <- -diag(n)
 //' b1 <- as.matrix(rep(0,n))
@@ -31,9 +31,8 @@ using Eigen::VectorXd;
 //' X0 <- chebycenter(A,b)
 //' x <- cpgs(1000,A,b,X0)
 //' @export
-// [[Rcpp::depends(RcppEigen)]]
 // [[Rcpp::export]]
-Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd &b,const Eigen::VectorXd &x0, const bool verbose=false) {
+Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd &b,const Eigen::VectorXd &x0) {
   int p=A.cols();
   int m=A.rows();
   int discard;
@@ -96,7 +95,6 @@ Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd
       W = A*T1;
     }
     if (!adapt) y=T2*y; //otherwise y=I^-1 * y=y
-    if (n>0 && n%50==0 && verbose) Rcpp::Rcout<<"sampling iter "<<n<<"/"<<discard+N<<std::endl;
 
     // choose p new components
     Eigen::VectorXd e(p);
@@ -137,9 +135,7 @@ Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd
       if ((S0-S).norm()/S0.norm()<0.05 && runup>=p) {
         adapt=false; //the covariance matrix is stable, adaptation stage is ok
         discard=runup;
-        if (verbose) Rcpp::Rcout<<"end of adaptation phase after "<<runup<<" iterations"<<std::endl;
-      } else{
-        if (verbose) Rcpp::Rcout<<"adaptation phase iter "<<runup<<" - score "<<(S0-S).norm()/S0.norm()<<std::endl;
+        Rcpp::Rcout<<"end of adaptation phase after "<<runup<<" iterations"<<std::endl;
       }
     } else if (adapt) {
       ++runup;

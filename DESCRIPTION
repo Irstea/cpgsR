@@ -10,7 +10,7 @@ Description: This packages aims at sampling points in convex polytopes. The code
 License: LGPL-3
 LinkingTo: Rcpp, RcppEigen
 Imports: 
-    Rcpp (>= 1.0.1),
+    Rcpp,
     RcppEigen (>= 0.3.3.5.0),
     linprog
 Encoding: UTF-8
@@ -19,5 +19,7 @@ Suggests:
     ggplot2,
     knitr,
     rmarkdown,
-    limSolve
+    limSolve,
+    MASS
 VignetteBuilder: knitr
+RoxygenNote: 6.1.1

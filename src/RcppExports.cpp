@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // cpgs
-Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd& A, const Eigen::VectorXd& b, const Eigen::VectorXd& x0, const bool verbose);
-RcppExport SEXP _cpgsR_cpgs(SEXP NSEXP, SEXP ASEXP, SEXP bSEXP, SEXP x0SEXP, SEXP verboseSEXP) {
+Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd& A, const Eigen::VectorXd& b, const Eigen::VectorXd& x0);
+RcppExport SEXP _cpgsR_cpgs(SEXP NSEXP, SEXP ASEXP, SEXP bSEXP, SEXP x0SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,14 +16,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type A(ASEXP);
     Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type b(bSEXP);
     Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type x0(x0SEXP);
-    Rcpp::traits::input_parameter< const bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpgs(N, A, b, x0, verbose));
+    rcpp_result_gen = Rcpp::wrap(cpgs(N, A, b, x0));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cpgsR_cpgs", (DL_FUNC) &_cpgsR_cpgs, 5},
+    {"_cpgsR_cpgs", (DL_FUNC) &_cpgsR_cpgs, 4},
     {NULL, NULL, 0}
 };
 

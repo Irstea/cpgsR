@@ -65,7 +65,7 @@ xsampleCPGS <- function (A = NULL, B = NULL, E = NULL, F = NULL, G = NULL, H = N
                        type = "mirror", jmp = NULL, tol = sqrt(.Machine$double.eps), 
                        x0 = NULL, fulloutput = FALSE, test = TRUE) 
 {
-  library(MASS)
+  require(MASS)
   mirror <- function(q1, g, h, k = length(q), jmp) {
     q2 <- rnorm(k, q1, jmp)
     if (!is.null(g)) {
@@ -324,22 +324,37 @@ We can now compare the sampling using example from the \code{\link{[limSolve]xsa
 
 
 ```{r}
-library(limSolve)
-#test
-E <- rbind(Minkdiet$Prey, rep(1, 7))
-F <- c(Minkdiet$Mink, 1)
-
-#oldway
-debut=Sys.time()
-res1=xsample(E = E, F = F, G = diag(7), H = rep(0, 7), iter = 50000,
-             output = 1000, type = "mirror")$X
-end=Sys.time()
-print(end-debut)
-
-#new way
-debut=Sys.time()
-res2=xsampleCPGS(E = E, F = F, G = diag(7), H = rep(0, 7), iter = 50000,
-               output = 1000, type = "cpgs")$X
-end=Sys.time()
-print(end-debut)
+if (require("limSolve")) {
+  #test
+  E <- rbind(Minkdiet$Prey, rep(1, 7))
+  F <- c(Minkdiet$Mink, 1)
+  
+  #oldway
+  debut = Sys.time()
+  res1 = xsample(
+    E = E,
+    F = F,
+    G = diag(7),
+    H = rep(0, 7),
+    iter = 50000,
+    output = 1000,
+    type = "mirror"
+  )$X
+  end = Sys.time()
+  print(end - debut)
+  
+  #new way
+  debut = Sys.time()
+  res2 = xsampleCPGS(
+    E = E,
+    F = F,
+    G = diag(7),
+    H = rep(0, 7),
+    iter = 50000,
+    output = 1000,
+    type = "cpgs"
+  )$X
+  end = Sys.time()
+  print(end - debut)
+}
 ```
