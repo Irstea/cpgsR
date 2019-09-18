@@ -321,7 +321,7 @@ xsampleCPGS <- function (A = NULL, B = NULL, E = NULL, F = NULL, G = NULL, H = N
 }
 ```
 
-We can now compare the sampling using example from the \code{\link{[limSolve]xsample}} function
+We can now compare the sampling using example from the \code{\link{[limSolve]xsample}} function. Note that, using this function is also a way to deal with equality constraints in addition to unequality constraints.
 
 
 
