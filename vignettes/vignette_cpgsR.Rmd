@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 library(cpgsR)
 ```
-This package aims at uniformly sampling points in a complex polytope defined by the inequalities \eqn{A \cdot x \leqslant   b}. It is based on an original matlab code from Tim Bernham - University of Queensland
+This package aims at uniformly sampling points in a complex polytope defined by the inequalities \eqn{A \cdot x \leqslant   b}. It is based on an original matlab code called CPRND that can be found there
 <https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope>. The package provides two functions:
 * \code{\link{cpgs}}: main function of the package that carry out the sampling
 * \code{\link{chebycenter}}: a function to compute the centroid of the polytope that can be used as inital point of the sampler

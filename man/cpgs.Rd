@@ -25,8 +25,8 @@ This function draw uniform samples in a convex polytope
 }
 \section{Details}{
 
-This function is based on an initial matlab code developped by Tim Bernham - University of Queensland
-(https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
+This function is based on an initial matlab code developped called CPRND
+(https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope)
 It generates samples within the complex polytope defined by \eqn{A \cdot x \leqslant   b}
 }
 
