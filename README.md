@@ -4,7 +4,7 @@ cpgsR: uniform sampling in a convex polytope
 License: LGPL-3
 
 # Introduction #
-This package is based on an initial matlab code developped by Tim Bernham - University of Queensland
+This package is based on an initial matlab code called CPRND that can be found here
 (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope
 
 # Installation #
