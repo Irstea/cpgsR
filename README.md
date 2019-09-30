@@ -1,7 +1,7 @@
 cpgsR: uniform sampling in a convex polytope
 ==================================================
 ---
-License: LGPL-3
+License: BSD_3_clause + file LICENSE
 
 # Introduction #
 This package is based on an initial matlab code called CPRND that can be found here

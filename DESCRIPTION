@@ -7,7 +7,7 @@ Authors@R: c(person("Hilaire","Drouineau",email="hilaire.drouineau@irstea.fr",ro
     person("Irstea - Norvegian Institute of Marine Research",role=("cph")))
 Date: 2019-09-16
 Description: This packages aims at sampling points in convex polytopes. The code is based on the matlab code provided by Tim Benham (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope).
-License: LGPL-3
+License: BSD_3_clause + file LICENSE
 LinkingTo: Rcpp, RcppEigen
 Imports: 
     Rcpp,
