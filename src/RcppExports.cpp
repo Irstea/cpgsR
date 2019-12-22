@@ -20,9 +20,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpgsEquality
+Eigen::MatrixXd cpgsEquality(const int N, const Eigen::MatrixXd& A, const Eigen::VectorXd& b, const Eigen::MatrixXd& C, const Eigen::VectorXd& v, const Eigen::VectorXd& x0);
+RcppExport SEXP _cpgsR_cpgsEquality(SEXP NSEXP, SEXP ASEXP, SEXP bSEXP, SEXP CSEXP, SEXP vSEXP, SEXP x0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type C(CSEXP);
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type v(vSEXP);
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type x0(x0SEXP);
+    rcpp_result_gen = Rcpp::wrap(cpgsEquality(N, A, b, C, v, x0));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_cpgsR_cpgs", (DL_FUNC) &_cpgsR_cpgs, 4},
+    {"_cpgsR_cpgsEquality", (DL_FUNC) &_cpgsR_cpgsEquality, 6},
     {NULL, NULL, 0}
 };
 

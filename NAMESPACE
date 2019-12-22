@@ -2,6 +2,7 @@
 
 export(chebycenter)
 export(cpgs)
+export(cpgsEquality)
 import(RcppEigen)
 importFrom(Rcpp,sourceCpp)
 importFrom(linprog,solveLP)

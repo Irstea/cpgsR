@@ -3,7 +3,7 @@
 \name{cpgs}
 \alias{cpgs}
 \title{Complex Polytope Gibbs Sampling
-This function draw uniform samples in a convex polytope}
+This function draw uniform samples in a convex polytope with inequality constraints}
 \usage{
 cpgs(N, A, b, x0)
 }
@@ -21,7 +21,7 @@ a matrix with one row per sample and one column per parameter
 }
 \description{
 Complex Polytope Gibbs Sampling
-This function draw uniform samples in a convex polytope
+This function draw uniform samples in a convex polytope with inequality constraints
 }
 \section{Details}{
 

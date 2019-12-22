@@ -2,7 +2,7 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' Complex Polytope Gibbs Sampling
-#' This function draw uniform samples in a convex polytope
+#' This function draw uniform samples in a convex polytope with inequality constraints
 #'
 #' @param N the number of samples to generate
 #' @param A a matrix
@@ -28,5 +28,38 @@
 #' @export
 cpgs <- function(N, A, b, x0) {
     .Call('_cpgsR_cpgs', PACKAGE = 'cpgsR', N, A, b, x0)
+}
+
+#' Complex Polytope Gibbs Sampling
+#' This function draw uniform samples in a convex polytope with both equality and inequality constraints
+#'
+#' @param N the number of samples to generate
+#' @param A a matrix of coefficients of inequality constants A.x<=b
+#' @param b a vector of length equals to nrow(A)
+#' @param C a matrix of coefficients of inequality constants C.x=v
+#' @param v a vector of length equals to nrow(C)
+#' @param x0 a vector of length equals to ncol(A) that should be in the polytope, for example returned by \code{\link{chebycenter}}
+#'
+#' @section Details:
+#' This function is based on an initial matlab code developped called CPRND
+#' (https://ch.mathworks.com/matlabcentral/fileexchange/34208-uniform-distribution-over-a-convex-polytope)
+#' It generates samples within the complex polytope defined by \eqn{A \cdot x \leqslant   b}
+#'
+#' @return a matrix with one row per sample and one column per parameter
+#' @examples
+#' n <- 20
+#' A1 <- -diag(n)
+#' b1 <- as.matrix(rep(0,n))
+#' A2 <- diag(n)
+#' b2 <- as.matrix(rep(1,n))
+#' A <- rbind(A1,A2)
+#' b <- rbind(b1,b2)
+#' C <- rbind(c(1,1,rep(0,n-2)),c(0,0,1,1,rep(0,n-4)))
+#' v <- matrix(rep(0.2,2),2)
+#' X0 <- rep(0.1,n)
+#' x <- cpgsEquality(1000,A,b,C,v,X0)
+#' @export
+cpgsEquality <- function(N, A, b, C, v, x0) {
+    .Call('_cpgsR_cpgsEquality', PACKAGE = 'cpgsR', N, A, b, C, v, x0)
 }
 
