@@ -2,6 +2,8 @@
 #include <RcppEigen.h>
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
+#include "cpgs.h"
+
 // [[Rcpp::depends(RcppEigen)]]
 
 using namespace Rcpp;
