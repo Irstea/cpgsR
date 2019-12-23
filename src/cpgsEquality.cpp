@@ -3,6 +3,7 @@
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
 #include "cpgsEquality.h"
+#include "cpgs.h"
 
 // [[Rcpp::depends(RcppEigen)]]
 
