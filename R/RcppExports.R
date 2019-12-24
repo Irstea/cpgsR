@@ -27,7 +27,7 @@
 #' x <- cpgs(1000,A,b,X0)
 #' @export
 cpgs <- function(N, A, b, x0) {
-    .Call('_cpgsR_cpgs', PACKAGE = 'cpgsR', N, A, b, x0)
+    .Call(`_cpgsR_cpgs`, N, A, b, x0)
 }
 
 #' Complex Polytope Gibbs Sampling
@@ -60,6 +60,10 @@ cpgs <- function(N, A, b, x0) {
 #' x <- cpgsEquality(1000,A,b,C,v,X0)
 #' @export
 cpgsEquality <- function(N, A, b, C, v, x0) {
-    .Call('_cpgsR_cpgsEquality', PACKAGE = 'cpgsR', N, A, b, C, v, x0)
+    .Call(`_cpgsR_cpgsEquality`, N, A, b, C, v, x0)
 }
 
+# Register entry points for exported C++ functions
+methods::setLoadAction(function(ns) {
+    .Call('_cpgsR_RcppExport_registerCCallable', PACKAGE = 'cpgsR')
+})

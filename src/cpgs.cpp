@@ -3,6 +3,7 @@
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
 // [[Rcpp::depends(RcppEigen)]]
+// [[Rcpp::interfaces(r, cpp)]]
 
 using namespace Rcpp;
 using namespace RcppEigen;
@@ -218,4 +219,13 @@ Eigen::MatrixXd cpgsEquality(const int N,const Eigen::MatrixXd &A ,const Eigen::
   MatrixXd x=cpgs(N,Abis,bbis,x0bis);
   for(int i=0;i<N;++i) X.row(i)=Nt*x.row(i)+x0;
   return X;
+}
+
+
+
+RCPP_MODULE(cgpsSamp){
+  using namespace Rcpp;
+  using namespace RcppEigen;
+  function("cpgs", &cpgs);
+  function("cpgsEquality", &cpgsEquality);
 }
