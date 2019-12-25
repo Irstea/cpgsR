@@ -19,7 +19,7 @@ Suggests:
     ggplot2,
     knitr,
     rmarkdown,
-    limSolve,
+    lpSolveAPI,
     MASS
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
