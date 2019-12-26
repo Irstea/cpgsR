@@ -30,7 +30,9 @@ getBoundParam <- function(A, b, p, C = NULL, v = NULL) {
   solve.lpExtPtr(lp_model)
   upbound <-
     (get.primal.solution(lp_model, orig = TRUE)[(ncontr + 1):(ncontr + nbparam)])[p]
+  lp_model <- defineLPMod(A, b, C, v)
   lp.control(lp_model, sense = "min")
+  set.objfn(lp_model, 1, p)
   solve.lpExtPtr(lp_model)
   lowbound <-
     get.primal.solution(lp_model, orig = TRUE)[(ncontr + 1):(ncontr + nbparam)][p]

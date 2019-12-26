@@ -19,6 +19,7 @@ LazyData: true
 Suggests: 
     knitr,
     rmarkdown,
-    MASS
+    MASS,
+    limSolve
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
