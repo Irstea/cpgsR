@@ -3,7 +3,7 @@
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
 // [[Rcpp::depends(RcppEigen)]]
-// [[Rcpp::interfaces(r, cpp)]]
+// [[Rcpp::interfaces(r)]]
 
 using namespace Rcpp;
 using namespace RcppEigen;

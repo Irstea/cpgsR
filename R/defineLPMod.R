@@ -5,6 +5,7 @@
 #' @param b a vector A x <=b
 #' @param C a matrix of equality constraints C x = v, should be null in the absence of such constraints
 #' @param v a vector of equality constraints C x = v, should be null in the absence of such constraints
+#' @param presolve argument send to \code{\link[lpSolveAPI]{lp.control}}
 #'
 #' @return a vector corresponding to the centroid of the polytope
 #'

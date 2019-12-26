@@ -63,7 +63,3 @@ cpgsEquality <- function(N, A, b, C, v, x0) {
     .Call(`_cpgsR_cpgsEquality`, N, A, b, C, v, x0)
 }
 
-# Register entry points for exported C++ functions
-methods::setLoadAction(function(ns) {
-    .Call('_cpgsR_RcppExport_registerCCallable', PACKAGE = 'cpgsR')
-})
