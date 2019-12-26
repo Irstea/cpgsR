@@ -143,15 +143,25 @@ Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd
       S2 +=(runup-1)/(double)(runup*runup)*(delta0*delta0.transpose())+(delta1*delta1.transpose());
       S0 = S;
       S = S2/(double)(runup-1);           // sample covariance
+
+      //end of adaptation phase successful
       if ((S0-S).norm()/S0.norm()<0.05 && runup>=p && runup<runupmax && adapt) {
         adapt=false; //the covariance matrix is stable, adaptation stage is ok
         discard=runup;
         Rcpp::Rcout<<"end of adaptation phase after "<<runup<<" iterations"<<std::endl;
-        if ((S0-S).norm()/S0.norm()<0.05) updatingS=false;
-      } else if (runup>=runupmax && adapt){
+        updatingS=false;
+      } else if (runup>=runupmax && adapt){  //end of adaptation phase unsuccessful
         adapt=false; //the covariance matrix is stable, adaptation stage is ok
         discard=runup;
         Rcpp::Rcout<<"end of adaptation phase after "<<runup<<" iterations, s not stabilized"<<std::endl;
+        runup=0;
+        S2.setZero();
+        S2 +=(runup-1)/(double)(runup*runup)*(delta0*delta0.transpose())+(delta1*delta1.transpose());
+        S0 = S;
+        S = S2/(double)(runup-1);           // sample covariance
+
+      } else if ((!adapt) && updatingS){
+        if ((S0-S).norm()/S0.norm()<0.05 && runup>=p) updatingS=false;
       }
     } else if (adapt) {
       ++runup;
@@ -223,9 +233,4 @@ Eigen::MatrixXd cpgsEquality(const int N,const Eigen::MatrixXd &A ,const Eigen::
 
 
 
-RCPP_MODULE(cgpsSamp){
-  using namespace Rcpp;
-  using namespace RcppEigen;
-  function("cpgs", &cpgs);
-  function("cpgsEquality", &cpgsEquality);
-}
+
