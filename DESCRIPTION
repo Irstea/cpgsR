@@ -12,14 +12,13 @@ LinkingTo: Rcpp, RcppEigen
 Imports: 
     Rcpp,
     RcppEigen (>= 0.3.3.5.0),
-    linprog
+    lpSolveAPI
 Encoding: UTF-8
 LazyData: true
 Suggests: 
     ggplot2,
     knitr,
     rmarkdown,
-    lpSolveAPI,
     MASS
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1

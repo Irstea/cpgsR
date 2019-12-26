@@ -11,8 +11,11 @@
 #'
 #' @return a vector corresponding to the centroid of the polytope
 #'
-#' @importFrom linprog solveLP
-#'
+#' @importFrom lpSolveAPI set.objfn
+#' @importFrom lpSolveAPI lp.control
+#' @importFrom lpSolveAPI solve.lpExtPtr
+#' @importFrom lpSolveAPI get.primal.solution
+#' @importFrom lpSolveAPI get.constr.value
 #' @examples
 #' n <- 20
 #' A1 <- -diag(n)
@@ -41,15 +44,14 @@ chebycenter <- function(A, b) {
               ncol = 1)
   f[p + 1] <- -1
 
+  lp_mod <- defineLPMod(A1,
+                        b)
+  ncontr <- length(get.constr.value(lp_mod))
+  set.objfn(lp_mod, f)
+  lp.control(lp_mod, sense = "min")
+  solve.lpExtPtr(lp_mod)
+  x <-
+    get.primal.solution(lp_mod, orig = TRUE)[(ncontr + 1):(ncontr + ncol(A1))]
 
-
-  d <-
-    linprog::solveLP(
-      cvec = f,
-      bvec = as.numeric(b),
-      Amat = A1,
-      const.dir = rep("<=", n)
-    )
-  x <- d$solution
   return(x[-p - 1])
 }
