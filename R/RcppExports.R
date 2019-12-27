@@ -60,7 +60,12 @@ cpgs <- function(N, A, b, x0) {
 #' X0 <- rep(0.1,n)
 #' x <- cpgsEquality(1000,A,b,C,v,X0)
 #' @export
+#' @useDynLib cpgsR
 cpgsEquality <- function(N, A, b, C, v, x0) {
     .Call('_cpgsR_cpgsEquality', PACKAGE = 'cpgsR', N, A, b, C, v, x0)
 }
 
+# Register entry points for exported C++ functions
+methods::setLoadAction(function(ns) {
+    .Call('_cpgsR_RcppExport_registerCCallable', PACKAGE = 'cpgsR')
+})
