@@ -1,5 +1,5 @@
-#' @useDynLib cpgsR, .registration = TRUE
+#' @useDynLib cpgsR
 #' @import RcppEigen
-#' @importFrom Rcpp sourceCpp
+#' @importFrom Rcpp evalCpp
 #' @rawNamespace exportPattern("^[[:alpha:]]+")
 NULL
