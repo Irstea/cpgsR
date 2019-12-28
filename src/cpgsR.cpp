@@ -217,7 +217,7 @@ Eigen::MatrixXd cpgsEquality(const int N,const Eigen::MatrixXd &A ,const Eigen::
   int m2=C.rows();
   int discard;
 
-  VectorXd X(N);
+  MatrixXd X(N,p);
 
   // Check input arguments
   if (m < (p+1) || b.size()!=m || x0.size()!=p){
@@ -228,14 +228,15 @@ Eigen::MatrixXd cpgsEquality(const int N,const Eigen::MatrixXd &A ,const Eigen::
   }
   // Initialisation
   FullPivLU<MatrixXd> lu(C);
-  MatrixXd Nt = lu.kernel().transpose();
-
-  MatrixXd Abis=A*N;
+  MatrixXd Nt = lu.kernel();
+  MatrixXd Abis=A*Nt;
   VectorXd bbis=b-A*x0;
 
   VectorXd x0bis=VectorXd::Zero(Nt.cols());
   MatrixXd x=cpgs(N,Abis,bbis,x0bis);
-  for(int i=0;i<N;++i) X.row(i)=Nt*x.row(i)+x0;
+  for(int i=0;i<N;++i) {
+    X.row(i)=Nt*x.row(i).transpose()+x0;
+  }
   return X;
 }
 
