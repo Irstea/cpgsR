@@ -11,7 +11,10 @@
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes_string
 #' @importFrom ggplot2 geom_polygon
-#'
+#' @importFrom lpSolveAPI lp.control
+#' @importFrom lpSolveAPI solve.lpExtPtr
+#' @importFrom lpSolveAPI get.constr.value
+#' @importFrom lpSolveAPI set.objfn
 #' @examples
 #' n <- 20
 #' A1 <- -diag(n)
@@ -36,9 +39,17 @@ checkPolytopeStatus <- function(A,
   nbparam <- ncol(A)
   lp_model <- defineLPMod(A, b, C, v)
   ncontr <- length(get.constr.value(lp_model))
-
+  lp.control(lp_model, sense = "min")
   set.objfn(lp_model, rep(1, nbparam))
   res <- solve.lpExtPtr(lp_model)
+  if (res==0){
+    nbparam <- ncol(A)
+    lp_model <- defineLPMod(A, b, C, v)
+    ncontr <- length(get.constr.value(lp_model))
+    lp.control(lp_model, sense = "max")
+    set.objfn(lp_model, rep(1, nbparam))
+    res <- solve.lpExtPtr(lp_model)
+  }
   if (res == 0) {
     print("polytope ok")
   } else if (res == 2) {
