@@ -27,15 +27,27 @@ getBoundParam <- function(A, b, p, C = NULL, v = NULL) {
   ncontr <- length(get.constr.value(lp_model))
   set.objfn(lp_model, 1, p)
   lp.control(lp_model, sense = "max")
-  solve.lpExtPtr(lp_model)
-  upbound <-
-    (get.primal.solution(lp_model, orig = TRUE)[(ncontr + 1):(ncontr + nbparam)])[p]
+  res <- solve.lpExtPtr(lp_model)
+  if (res == 0) {
+    upbound <-
+      (get.primal.solution(lp_model, orig = TRUE)[(ncontr + 1):(ncontr + nbparam)])[p]
+  } else if (res == 3) {
+    upbound <- Inf
+  } else {
+    upbound <- NA
+  }
   lp_model <- defineLPMod(A, b, C, v)
   lp.control(lp_model, sense = "min")
   set.objfn(lp_model, 1, p)
-  solve.lpExtPtr(lp_model)
-  lowbound <-
-    get.primal.solution(lp_model, orig = TRUE)[(ncontr + 1):(ncontr + nbparam)][p]
+  res <- solve.lpExtPtr(lp_model)
+  if (res == 0) {
+    lowbound <-
+      (get.primal.solution(lp_model, orig = TRUE)[(ncontr + 1):(ncontr + nbparam)])[p]
+  } else if (res == 3) {
+    lowbound <- -Inf
+  } else {
+    lowbound <- NA
+  }
   c(lowbound, upbound)
 }
 
