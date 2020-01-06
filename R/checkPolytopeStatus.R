@@ -38,14 +38,12 @@ checkPolytopeStatus <- function(A,
                                 v = NULL) {
   nbparam <- ncol(A)
   lp_model <- defineLPMod(A, b, C, v)
-  ncontr <- length(get.constr.value(lp_model))
   lp.control(lp_model, sense = "min")
   set.objfn(lp_model, rep(1, nbparam))
   res <- solve.lpExtPtr(lp_model)
-  if (res==0){
+  if (res == 0) {
     nbparam <- ncol(A)
     lp_model <- defineLPMod(A, b, C, v)
-    ncontr <- length(get.constr.value(lp_model))
     lp.control(lp_model, sense = "max")
     set.objfn(lp_model, rep(1, nbparam))
     res <- solve.lpExtPtr(lp_model)
@@ -61,6 +59,6 @@ checkPolytopeStatus <- function(A,
   } else if (res == 5) {
     print("numerical error")
   } else {
-    print ("potential problem")
+    print("potential problem")
   }
 }

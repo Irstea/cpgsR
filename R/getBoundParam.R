@@ -1,5 +1,5 @@
 #' getBoundParam
-#' Computes the possible bounds for a parameter p of a polytope defined by A.x<=b and C.x=v
+#' Computes the possible bounds for a parameter p of a polytope defined by+A.x<=b and C.x=v
 #' @param A the matrix of inequality A.x<=b
 #' @param b the vector A.x<=b
 #' @param p the index of the parameter for which the bounds should be computed
@@ -30,7 +30,8 @@ getBoundParam <- function(A, b, p, C = NULL, v = NULL) {
   res <- solve.lpExtPtr(lp_model)
   if (res == 0) {
     upbound <-
-      (get.primal.solution(lp_model, orig = TRUE)[(ncontr + 1):(ncontr + nbparam)])[p]
+      (get.primal.solution(lp_model,
+                           orig = TRUE)[(ncontr + 1):(ncontr + nbparam)])[p]
   } else if (res == 3) {
     upbound <- Inf
   } else {
@@ -42,7 +43,8 @@ getBoundParam <- function(A, b, p, C = NULL, v = NULL) {
   res <- solve.lpExtPtr(lp_model)
   if (res == 0) {
     lowbound <-
-      (get.primal.solution(lp_model, orig = TRUE)[(ncontr + 1):(ncontr + nbparam)])[p]
+      (get.primal.solution(lp_model,
+                           orig = TRUE)[(ncontr + 1):(ncontr + nbparam)])[p]
   } else if (res == 3) {
     lowbound <- -Inf
   } else {
@@ -50,4 +52,3 @@ getBoundParam <- function(A, b, p, C = NULL, v = NULL) {
   }
   c(lowbound, upbound)
 }
-

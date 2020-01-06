@@ -13,9 +13,11 @@ defineLPMod(A, b, C = NULL, v = NULL, presolve = c("rows", "lindep",
 
 \item{b}{a vector A x <=b}
 
-\item{C}{a matrix of equality constraints C x = v, should be null in the absence of such constraints}
+\item{C}{a matrix of equality constraints C x = v, should be null in the
+absence of such constraints}
 
-\item{v}{a vector of equality constraints C x = v, should be null in the absence of such constraints}
+\item{v}{a vector of equality constraints C x = v, should be null in the
+absence of such constraints}
 
 \item{presolve}{argument send to \code{\link[lpSolveAPI]{lp.control}}}
 }

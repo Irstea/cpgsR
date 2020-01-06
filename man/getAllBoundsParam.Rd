@@ -3,7 +3,8 @@
 \name{getAllBoundsParam}
 \alias{getAllBoundsParam}
 \title{getAllBoundsParam
-Computes the possible bounds for all parameters of a polytope defined by A.x<=b and C.x=v}
+Computes the possible bounds for all parameters of a polytope defined by
+A.x<=b and C.x=v}
 \usage{
 getAllBoundsParam(A, b, C = NULL, v = NULL)
 }
@@ -17,11 +18,13 @@ getAllBoundsParam(A, b, C = NULL, v = NULL)
 \item{v}{the vector of equality C.x=v (default NULL for no equality}
 }
 \value{
-a datrame with first column corresponding to colnames(A), and corresponding lower bounds (column 2) and upper bounds (column 3)
+a datrame with first column corresponding to colnames(A), and
+corresponding lower bounds (column 2) and upper bounds (column 3)
 }
 \description{
 getAllBoundsParam
-Computes the possible bounds for all parameters of a polytope defined by A.x<=b and C.x=v
+Computes the possible bounds for all parameters of a polytope defined by
+A.x<=b and C.x=v
 }
 \examples{
 n <- 20

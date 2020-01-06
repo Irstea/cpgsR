@@ -1,10 +1,12 @@
 #' plotPolytope2D
-#' polt the possible values of a multimensional convex polytope by A.x<=b and C.x=v for 2 dimensions
+#' polt the possible values of a multimensional convex polytope by A.x<=b and
+#' C.x=v for 2 dimensions
 #' @param A the matrix of inequality A.x<=b
 #' @param b the vector A.x<=b
 #' @param C the matrix of equality C.x=v (default NULL for no equality)
 #' @param v the vector of equality C.x=v (default NULL for no equality
-#' @param params a vector of length 2 corresponding to the index of the parameters
+#' @param params a vector of length 2 corresponding to the index of the
+#' parameters
 #' @return a ggplot
 #'
 #' @importFrom utils setTxtProgressBar
@@ -40,7 +42,7 @@ plotPolytope2D <- function(A,
       stop(paste("params", which(old_params[is.na(params)]), "not recognized"))
   }
   if (is.null(colnames(A))) {
-    colnames(A) <- paste("col", 1:ncol(A), sep = "")
+    colnames(A) <- paste("col", seq_len(ncol(A)), sep = "")
   }
   bounds_param1 <- getBoundParam(A, b, params[1], C, v)
   seqx1 <- seq(bounds_param1[1], bounds_param1[2], length.out = 50)
@@ -54,11 +56,12 @@ plotPolytope2D <- function(A,
                         )), c(v, x)))
   })
   polygon <-
-    as.data.frame(rbind(do.call('rbind', lapply(polygon, function(x)
-      x[1,])), do.call('rbind', lapply(rev(polygon), function(x)
-        x[2,]))))
+    as.data.frame(rbind(do.call("rbind", lapply(polygon, function(x)
+      x[1, ])), do.call("rbind", lapply(rev(polygon), function(x)
+        x[2, ]))))
   names(polygon) <- colnames(A)[params]
-  ggplot(polygon, aes_string(x = colnames(A)[params[1]], y = colnames(A)[params[2]])) +
+  ggplot(polygon,
+         aes_string(x = colnames(A)[params[1]], y = colnames(A)[params[2]])) +
     geom_polygon()
 
 }

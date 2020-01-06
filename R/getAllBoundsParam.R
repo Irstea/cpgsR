@@ -1,5 +1,6 @@
 #' getAllBoundsParam
-#' Computes the possible bounds for all parameters of a polytope defined by A.x<=b and C.x=v
+#' Computes the possible bounds for all parameters of a polytope defined by
+#' A.x<=b and C.x=v
 #' @param A the matrix of inequality A.x<=b
 #' @param b the vector A.x<=b
 #' @param C the matrix of equality C.x=v (default NULL for no equality)
@@ -8,7 +9,8 @@
 #' @importFrom utils setTxtProgressBar
 #' @importFrom utils txtProgressBar
 #'
-#' @return a datrame with first column corresponding to colnames(A), and corresponding lower bounds (column 2) and upper bounds (column 3)
+#' @return a datrame with first column corresponding to colnames(A), and
+#' corresponding lower bounds (column 2) and upper bounds (column 3)
 #' @examples
 #' n <- 20
 #' A1 <- -diag(n)
@@ -22,8 +24,8 @@
 
 getAllBoundsParam <- function(A, b, C = NULL, v = NULL) {
   nbparam <- ncol(A)
-  if(is.null(colnames(A))){
-    colnames(A)<-paste("col",1:ncol(A),sep="")
+  if (is.null(colnames(A))) {
+    colnames(A) <- paste("col", seq_len(ncol(A)), sep = "")
   }
   pb <- txtProgressBar(min = 0, max = nbparam, style = 3)
   bounds <- sapply(1:nbparam, function(p) {

@@ -3,7 +3,8 @@
 \name{plotPolytope2D}
 \alias{plotPolytope2D}
 \title{plotPolytope2D
-polt the possible values of a multimensional convex polytope by A.x<=b and C.x=v for 2 dimensions}
+polt the possible values of a multimensional convex polytope by A.x<=b and
+C.x=v for 2 dimensions}
 \usage{
 plotPolytope2D(A, b, C = NULL, v = NULL, params = c(1, 2))
 }
@@ -16,14 +17,16 @@ plotPolytope2D(A, b, C = NULL, v = NULL, params = c(1, 2))
 
 \item{v}{the vector of equality C.x=v (default NULL for no equality}
 
-\item{params}{a vector of length 2 corresponding to the index of the parameters}
+\item{params}{a vector of length 2 corresponding to the index of the
+parameters}
 }
 \value{
 a ggplot
 }
 \description{
 plotPolytope2D
-polt the possible values of a multimensional convex polytope by A.x<=b and C.x=v for 2 dimensions
+polt the possible values of a multimensional convex polytope by A.x<=b and
+C.x=v for 2 dimensions
 }
 \examples{
 n <- 20
