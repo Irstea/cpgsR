@@ -45,7 +45,7 @@ using Eigen::VectorXd;
 Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd &b,const Eigen::VectorXd &x0) {
   int p=A.cols();
   int m=A.rows();
-  int discard;
+  int discard=0;
 
   // Check input arguments
   if (m < (p+1) || b.size()!=m || x0.size()!=p){
@@ -215,7 +215,6 @@ Eigen::MatrixXd cpgsEquality(const int N,const Eigen::MatrixXd &A ,const Eigen::
   int m=A.rows();
   int p2=C.cols();
   int m2=C.rows();
-  int discard;
 
   MatrixXd X(N,p);
 
