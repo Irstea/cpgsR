@@ -2,6 +2,7 @@
 #include <RcppEigen.h>
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
+#include <limits>
 using namespace Rcpp;
 using namespace RcppEigen;
 using Eigen::Map;
@@ -10,6 +11,23 @@ using Eigen::VectorXd;
 
 
 // [[Rcpp::depends(RcppEigen)]]
+
+
+void updateS(Eigen::MatrixXd &S, Eigen::MatrixXd &S2, Eigen::MatrixXd &S0, Eigen::MatrixXd &M, Eigen::MatrixXd &delta0, Eigen::MatrixXd &delta1, const Eigen::VectorXd &x, int iter){
+  delta0 = x - M; // delta new point wrt old mean
+  M+= delta0/(double)iter;     // sample mean
+  delta1= x - M;      // delta new point wrt new mean
+  if (iter>1){
+    S2 +=(iter-1)/(double)(iter*iter)*(delta0*delta0.transpose())+(delta1*delta1.transpose());
+    S0=S;
+    S = S2/(double)(iter-1);           // sample covariance
+  }
+}
+
+
+
+
+
 
 
 // [[Rcpp::interfaces(r,cpp)]]
@@ -42,10 +60,11 @@ using Eigen::VectorXd;
 //' @useDynLib cpgsR
 // [[Rcpp::export]]
 
+
 Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd &b,const Eigen::VectorXd &x0) {
   int p=A.cols();
   int m=A.rows();
-  int discard=0;
+  double inf = std::numeric_limits<double>::max();
 
   // Check input arguments
   if (m < (p+1) || b.size()!=m || x0.size()!=p){
@@ -53,7 +72,6 @@ Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd
   }
   // Initialisation
   Eigen::MatrixXd X(N,p);
-  int n=0;
   Eigen::MatrixXd x(p,1);
   Eigen::MatrixXd y(p,1);
   x=x0;
@@ -79,7 +97,9 @@ Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd
 
   W = A;
   bool adapt=true;
+  bool updatingS=true;
   Eigen::MatrixXd d(m,1);
+  Eigen::MatrixXd d2(m,1);
   Eigen::MatrixXd delta0(p,1);
   Eigen::MatrixXd delta1(p,1);
   Eigen::MatrixXd z(m,1);
@@ -88,17 +108,21 @@ Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd
   Eigen::VectorXd Dtmp(p);
   Eigen::VectorXd Dzero=VectorXd::Constant(p,1.0e-16);
   Eigen::LDLT<MatrixXd> ldltOfS(S.cols());
-  int runup=0;
+  int runup=0; //number of adapt
+  int discard=0; //number of discard
+  int isample=0; //number of sample
+  int n=0; //total number of iterations
+  int stage=0; //0 adapting phase, 1 discarding phase, 2 sampling
   int runupmax= 10*p*(p+1);
-  int updatingS=true;
-
-  while ((adapt==true) || (n < (N+discard))){               //sampling loop
+  int discardmax=runupmax;
+  double crit=0;
+  while (isample<N){               //sampling loop
     //std::random_shuffle(index.begin(), index.end()); //we change the order to limit the influence of initial ordering
     index=sample(index,p,false);
     y=x;
     NumericVector alea2=runif(p);
     // compute approximate stochastic transformation
-    if ((!adapt) && n == 0){ //first true sample, we now make the isotropic transformation
+    if ((stage==1 && discard==0) || (stage>0 && updatingS==true)){ //first true sample, we now make the isotropic transformation
       ldltOfS.compute(S.transpose());
       D=ldltOfS.vectorD().cwiseMax(Dzero).asDiagonal();
       L=ldltOfS.matrixL();
@@ -106,67 +130,80 @@ Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd
       T2=T1.inverse();
       W = A*T1;
     }
-    if (!adapt) y=T2*y; //otherwise y=I^-1 * y=y
+    if (stage>0) y=T2*y; //otherwise y=I^-1 * y=y
 
     // choose p new components
-    Eigen::VectorXd e(p);
     for (int ip=0;ip<p;++ip){
       int i=index[ip];
       //Find points where the line with the (p-1) components x_i
       //fixed intersects the bounding polytope.
-      e.setZero();
-      e(i)= 1;
-      z = (W*e); //prevent any divisions by 0
-      d=(b - W*y);
-      d=d.cwiseQuotient(z);
-      double tmin=-9e9;
-      double tmax=9e9;
+      z = W.col(i); //prevent any divisions by 0
+      if (ip==0)
+        d2=(b - W*y);
+      d=d2.cwiseQuotient(z);
+      double tmin=-inf;
+      double tmax=inf;
       for (int j=0;j<m;++j){
         if (z(j)<0 && tmin<d(j)) tmin=d(j);
         if (z(j)>0 && tmax>d(j)) tmax=d(j);
-      }
-      y(i)+=(tmin+(tmax-tmin)*alea2(i));
-    }
+     }
+      tmin=std::min(0.0, tmin);
+      tmax=std::max(0.0, tmax);
+
+
+      double delta = -y(i);
+      y(i) += (tmin+(tmax-tmin)*alea2(i));
+      y(i)=std::min(std::max(y(i),-inf),inf);
+      //Rcout<<tmin<<" "<<tmax<<" "<<y(i)<<std::endl;
+      delta += y(i);
+      d2 =d2- W.col(i)*delta; //we do this to avoid making a matrix multiplication for each parameter (we just update the value of the constraint with the delta of parameter)
+}
     x=T1*y;
-    if (!adapt){
-      if (n>=discard){
-        X.row(n-discard)= x.col(0);
-      }
-      ++n;
-    }
-    if ((adapt && runup>1) || updatingS){  //part in the adapation phase to tune the isotropic transformation
+
+    if (stage==0){//still in updating phase
       ++runup;
-      // Incremental mean and covariance updates
-      delta0 = x - M; // delta new point wrt old mean
-      M+= delta0/(double)runup;     // sample mean
-      delta1= x - M;      // delta new point wrt new mean
-
-      S2 +=(runup-1)/(double)(runup*runup)*(delta0*delta0.transpose())+(delta1*delta1.transpose());
-      S0 = S;
-      S = S2/(double)(runup-1);           // sample covariance
-
-      //end of adaptation phase successful
-      if ((S0-S).norm()/S0.norm()<0.05 && runup>=p && runup<runupmax && adapt) {
-        adapt=false; //the covariance matrix is stable, adaptation stage is ok
-        discard=runup;
-        Rcpp::Rcout<<"end of adaptation phase after "<<runup<<" iterations"<<std::endl;
+      if (updatingS) updateS(S, S2, S0, M, delta0, delta1, x, runup);
+      crit=(S0-S).norm()/S0.norm();
+      if(runup>p & crit<0.5){
+        stage=1;
         updatingS=false;
-      } else if (runup>=runupmax && adapt){  //end of adaptation phase unsuccessful
-        adapt=false; //the covariance matrix is stable, adaptation stage is ok
-        discard=runup;
-        Rcpp::Rcout<<"end of adaptation phase after "<<runup<<" iterations, s not stabilized"<<std::endl;
-        runup=0;
+        Rcout<<"########adapation successful after "<<runup<<" iterations"<<std::endl;
+        discardmax=runup;
+      } else if (runup==runupmax){
+        stage=1;
+        M.setZero();
         S2.setZero();
-        S2 +=(runup-1)/(double)(runup*runup)*(delta0*delta0.transpose())+(delta1*delta1.transpose());
-        S0 = S;
-        S = S2/(double)(runup-1);           // sample covariance
-
-      } else if ((!adapt) && updatingS){
-        if ((S0-S).norm()/S0.norm()<0.05 && runup>=p) updatingS=false;
+        S.setIdentity();
+        Rcout<<"########adapation unsuccessful after "<<runup<<" iterations"<<std::endl;
       }
-    } else if (adapt) {
-      ++runup;
+    } else if (stage==1){ //we are in adapting phase
+      ++discard;
+      if (updatingS) updateS(S, S2, S0, M, delta0, delta1, x, discard);
+      crit=(S0-S).norm()/S0.norm();
+      if (crit < 0.5) {
+        if (updatingS) Rcout<<"##stop updating S during discarding phase"<<std::endl;
+        updatingS=false;
+      }
+      if (discard==discardmax){
+        stage=2;
+        M.setZero();
+        S.setIdentity();
+        S2.setZero();
+        Rcout<<"#######end of discarding phase"<<std::endl;
+        if (updatingS) Rcout<<"S still updated"<<std::endl;
+      }
+    } else{ //we are in sampling phase
+      X.row(isample)=x.col(0);
+      ++isample;
+      if (updatingS) updateS(S, S2, S0, M, delta0, delta1, x, isample);
+      double crit=(S0-S).norm()/S0.norm();
+      if (crit < 0.5) {
+        if (updatingS) Rcout<<"##stop updating S during sampling phase"<<std::endl;
+        updatingS=false;
+      }
     }
+    if (n % 100 == 0) Rcout<<"##iteration "<<n<<" stage "<<stage<<" crit "<<crit<<" S0.norm "<<S0.norm()<<" S-S0 "<<(S-S0).norm()<<std::endl;
+    ++n;
   }
   return X;
 }
@@ -238,5 +275,9 @@ Eigen::MatrixXd cpgsEquality(const int N,const Eigen::MatrixXd &A ,const Eigen::
   }
   return X;
 }
+
+
+
+
 
 
