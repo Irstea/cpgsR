@@ -6,7 +6,7 @@
 Specify an lp_model (mainly for internal use)}
 \usage{
 defineLPMod(A, b, C = NULL, v = NULL, presolve = c("rows", "lindep",
-  "cols"))
+  "cols"), lower = NULL)
 }
 \arguments{
 \item{A}{a matrix of inequality constraints A x <=b}
@@ -20,6 +20,8 @@ absence of such constraints}
 absence of such constraints}
 
 \item{presolve}{argument send to \code{\link[lpSolveAPI]{lp.control}}}
+
+\item{lower}{minimal bounds for paramaters, by default set to zero}
 }
 \value{
 a vector corresponding to the centroid of the polytope
