@@ -25,17 +25,17 @@ namespace cpgsR {
         }
     }
 
-    inline Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd& A, const Eigen::VectorXd& b, const Eigen::VectorXd& x0) {
-        typedef SEXP(*Ptr_cpgs)(SEXP,SEXP,SEXP,SEXP);
+    inline Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd& A, const Eigen::VectorXd& b, const Eigen::VectorXd& x0, const int thin = 1) {
+        typedef SEXP(*Ptr_cpgs)(SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr_cpgs p_cpgs = NULL;
         if (p_cpgs == NULL) {
-            validateSignature("Eigen::MatrixXd(*cpgs)(const int,const Eigen::MatrixXd&,const Eigen::VectorXd&,const Eigen::VectorXd&)");
+            validateSignature("Eigen::MatrixXd(*cpgs)(const int,const Eigen::MatrixXd&,const Eigen::VectorXd&,const Eigen::VectorXd&,const int)");
             p_cpgs = (Ptr_cpgs)R_GetCCallable("cpgsR", "_cpgsR_cpgs");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_cpgs(Shield<SEXP>(Rcpp::wrap(N)), Shield<SEXP>(Rcpp::wrap(A)), Shield<SEXP>(Rcpp::wrap(b)), Shield<SEXP>(Rcpp::wrap(x0)));
+            rcpp_result_gen = p_cpgs(Shield<SEXP>(Rcpp::wrap(N)), Shield<SEXP>(Rcpp::wrap(A)), Shield<SEXP>(Rcpp::wrap(b)), Shield<SEXP>(Rcpp::wrap(x0)), Shield<SEXP>(Rcpp::wrap(thin)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -46,17 +46,17 @@ namespace cpgsR {
         return Rcpp::as<Eigen::MatrixXd >(rcpp_result_gen);
     }
 
-    inline Eigen::MatrixXd cpgsEquality(const int N, const Eigen::MatrixXd& A, const Eigen::VectorXd& b, const Eigen::MatrixXd& C, const Eigen::VectorXd& v, const Eigen::VectorXd& x0) {
-        typedef SEXP(*Ptr_cpgsEquality)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+    inline Eigen::MatrixXd cpgsEquality(const int N, const Eigen::MatrixXd& A, const Eigen::VectorXd& b, const Eigen::MatrixXd& C, const Eigen::VectorXd& v, const Eigen::VectorXd& x0, const int thin = 1) {
+        typedef SEXP(*Ptr_cpgsEquality)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr_cpgsEquality p_cpgsEquality = NULL;
         if (p_cpgsEquality == NULL) {
-            validateSignature("Eigen::MatrixXd(*cpgsEquality)(const int,const Eigen::MatrixXd&,const Eigen::VectorXd&,const Eigen::MatrixXd&,const Eigen::VectorXd&,const Eigen::VectorXd&)");
+            validateSignature("Eigen::MatrixXd(*cpgsEquality)(const int,const Eigen::MatrixXd&,const Eigen::VectorXd&,const Eigen::MatrixXd&,const Eigen::VectorXd&,const Eigen::VectorXd&,const int)");
             p_cpgsEquality = (Ptr_cpgsEquality)R_GetCCallable("cpgsR", "_cpgsR_cpgsEquality");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_cpgsEquality(Shield<SEXP>(Rcpp::wrap(N)), Shield<SEXP>(Rcpp::wrap(A)), Shield<SEXP>(Rcpp::wrap(b)), Shield<SEXP>(Rcpp::wrap(C)), Shield<SEXP>(Rcpp::wrap(v)), Shield<SEXP>(Rcpp::wrap(x0)));
+            rcpp_result_gen = p_cpgsEquality(Shield<SEXP>(Rcpp::wrap(N)), Shield<SEXP>(Rcpp::wrap(A)), Shield<SEXP>(Rcpp::wrap(b)), Shield<SEXP>(Rcpp::wrap(C)), Shield<SEXP>(Rcpp::wrap(v)), Shield<SEXP>(Rcpp::wrap(x0)), Shield<SEXP>(Rcpp::wrap(thin)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();

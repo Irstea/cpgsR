@@ -39,6 +39,7 @@ void updateS(Eigen::MatrixXd &S, Eigen::MatrixXd &S2, Eigen::MatrixXd &S0, Eigen
 //' @param A a matrix
 //' @param b a vector of length equals to nrow(A)
 //' @param x0 a vector of length equals to nrcol(A) that should be in the polytope, for example returned by \code{\link{chebycenter}}
+//' @param thin thinning interval
 //'
 //' @section Details:
 //' This function is based on an initial matlab code developped called CPRND
@@ -61,7 +62,7 @@ void updateS(Eigen::MatrixXd &S, Eigen::MatrixXd &S2, Eigen::MatrixXd &S0, Eigen
 // [[Rcpp::export]]
 
 
-Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd &b,const Eigen::VectorXd &x0) {
+Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd &A ,const Eigen::VectorXd &b,const Eigen::VectorXd &x0, const int thin=1) {
   int p=A.cols();
   int m=A.rows();
   double inf = std::numeric_limits<double>::max();
@@ -114,15 +115,18 @@ Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd
   int n=0; //total number of iterations
   int stage=0; //0 adapting phase, 1 discarding phase, 2 sampling
   int runupmax= 10*p*(p+1);
+  int sampleit=0; //total number of iteration during sampling, useful for thin
   int discardmax=runupmax;
   double crit=0;
   while (isample<N){               //sampling loop
-    //std::random_shuffle(index.begin(), index.end()); //we change the order to limit the influence of initial ordering
+    //std::random_shuffle(index.begin(), index.end()); //we change the order to
+    //limit the influence of initial ordering
     index=sample(index,p,false);
     y=x;
     NumericVector alea2=runif(p);
     // compute approximate stochastic transformation
-    if ((stage==1 && discard==0) || (stage>0 && updatingS==true)){ //first true sample, we now make the isotropic transformation
+    if ((stage==1 && discard==0) || (stage>0 && updatingS==true)){ //first true
+      //sample, we now make the isotropic transformation
       ldltOfS.compute(S.transpose());
       D=ldltOfS.vectorD().cwiseMax(Dzero).asDiagonal();
       L=ldltOfS.matrixL();
@@ -156,7 +160,9 @@ Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd
       y(i)=std::min(std::max(y(i),-inf),inf);
       //Rcout<<tmin<<" "<<tmax<<" "<<y(i)<<std::endl;
       delta += y(i);
-      d2 =d2- W.col(i)*delta; //we do this to avoid making a matrix multiplication for each parameter (we just update the value of the constraint with the delta of parameter)
+      d2 =d2- W.col(i)*delta; //we do this to avoid making a matrix
+      //multiplication for each parameter (we just update the value of the
+      //constraint with the delta of parameter)
 }
     x=T1*y;
 
@@ -193,14 +199,17 @@ Eigen::MatrixXd cpgs(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd
         if (updatingS) Rcout<<"S still updated"<<std::endl;
       }
     } else{ //we are in sampling phase
-      X.row(isample)=x.col(0);
-      ++isample;
+      if ((sampleit % thin) == 0){
+        X.row(isample)=x.col(0);
+        ++isample;
+      }
       if (updatingS) updateS(S, S2, S0, M, delta0, delta1, x, isample);
       double crit=(S0-S).norm()/S0.norm();
       if (crit < 0.5) {
         if (updatingS) Rcout<<"##stop updating S during sampling phase"<<std::endl;
         updatingS=false;
       }
+      ++sampleit;
     }
     if (n % 100 == 0) Rcout<<"##iteration "<<n<<" stage "<<stage<<" crit "<<crit<<" S0.norm "<<S0.norm()<<" S-S0 "<<(S-S0).norm()<<std::endl;
     ++n;
@@ -223,6 +232,7 @@ using Eigen::FullPivLU;
 //' @param C a matrix of coefficients of inequality constants C.x=v
 //' @param v a vector of length equals to nrow(C)
 //' @param x0 a vector of length equals to ncol(A) that should be in the polytope, for example returned by \code{\link{chebycenter}}
+//' @param thin the thinning interval
 //'
 //' @section Details:
 //' This function is based on an initial matlab code developped called CPRND
@@ -247,7 +257,10 @@ using Eigen::FullPivLU;
 // [[Rcpp::export]]
 
 
-Eigen::MatrixXd cpgsEquality(const int N,const Eigen::MatrixXd &A ,const Eigen::VectorXd &b,const Eigen::MatrixXd &C ,const Eigen::VectorXd &v,const Eigen::VectorXd &x0){
+Eigen::MatrixXd cpgsEquality(const int N, const Eigen::MatrixXd &A,
+                             const Eigen::VectorXd &b, const Eigen::MatrixXd &C,
+                             const Eigen::VectorXd &v, const Eigen::VectorXd &x0,
+                             const int thin=1){
   int p=A.cols();
   int m=A.rows();
   int p2=C.cols();
@@ -269,7 +282,7 @@ Eigen::MatrixXd cpgsEquality(const int N,const Eigen::MatrixXd &A ,const Eigen::
   VectorXd bbis=b-A*x0;
 
   VectorXd x0bis=VectorXd::Zero(Nt.cols());
-  MatrixXd x=cpgs(N,Abis,bbis,x0bis);
+  MatrixXd x=cpgs(N, Abis, bbis, x0bis, thin);
   for(int i=0;i<N;++i) {
     X.row(i)=Nt*x.row(i).transpose()+x0;
   }
