@@ -27,6 +27,29 @@ void updateS(Eigen::MatrixXd &S, Eigen::MatrixXd &S2, Eigen::MatrixXd &S0, Eigen
 
 
 
+IntegerVector order_(const NumericVector & x) {
+  NumericVector sorted = clone(x).sort();
+  return match(sorted, x);
+}
+
+
+void findOrder(IntegerVector & index, const Eigen::MatrixXd &W, const Eigen::VectorXd &y, const Eigen::VectorXd & b, Eigen::VectorXd &delta){
+/*  int nbpar = W.cols();
+  int nbconstr = b.size();
+  delta = b - W*y;
+
+  Eigen::VectorXd deltastd(nbpar);
+  Eigen::VectorXd coeff(nbconstr);
+  NumericVector range(nbpar);
+
+  for (int param = 0; param<nbpar; ++param){
+    coeff=W.col(param);
+    deltastd=delta.cwiseQuotient(coeff);
+    range[param]=(coeff.array()>0).select(deltastd,9e9).minCoeff()-(coeff.array()<0).select(deltastd,-9e9).maxCoeff();
+  }
+  index=index[order_(range)];*/
+}
+
 
 
 
@@ -40,6 +63,7 @@ void updateS(Eigen::MatrixXd &S, Eigen::MatrixXd &S2, Eigen::MatrixXd &S0, Eigen
 //' @param b a vector of length equals to nrow(A)
 //' @param x0 a vector of length equals to nrcol(A) that should be in the polytope, for example returned by \code{\link{chebycenter}}
 //' @param thin thinning interval
+//' @param test if true, tryes a method to decrease autocorrelation
 //'
 //' @section Details:
 //' This function is based on an initial matlab code developped called CPRND
@@ -62,7 +86,7 @@ void updateS(Eigen::MatrixXd &S, Eigen::MatrixXd &S2, Eigen::MatrixXd &S0, Eigen
 // [[Rcpp::export]]
 
 
-Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd &A ,const Eigen::VectorXd &b,const Eigen::VectorXd &x0, const int thin=1) {
+Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd &A ,const Eigen::VectorXd &b,const Eigen::VectorXd &x0, const int thin=1, const bool test=false) {
   int p=A.cols();
   int m=A.rows();
   double inf = std::numeric_limits<double>::max();
@@ -95,6 +119,7 @@ Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd &A ,const Eigen::VectorX
   Eigen::MatrixXd T2(p,p);
   T1.setIdentity();
   Eigen::MatrixXd W(m,p);
+  Eigen::VectorXd delta(m); //vector used to store distance to bounds
 
   W = A;
   bool adapt=true;
@@ -121,7 +146,11 @@ Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd &A ,const Eigen::VectorX
   while (isample<N){               //sampling loop
     //std::random_shuffle(index.begin(), index.end()); //we change the order to
     //limit the influence of initial ordering
-    index=sample(index,p,false);
+    if (test){
+      findOrder(index,W,y,b,delta);
+    } else{
+      index=sample(index,p,false);
+    }
     y=x;
     NumericVector alea2=runif(p);
     // compute approximate stochastic transformation
@@ -138,7 +167,7 @@ Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd &A ,const Eigen::VectorX
 
     // choose p new components
     for (int ip=0;ip<p;++ip){
-      int i=index[ip];
+      int i=index[p-ip-1];
       //Find points where the line with the (p-1) components x_i
       //fixed intersects the bounding polytope.
       z = W.col(i); //prevent any divisions by 0
@@ -150,7 +179,7 @@ Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd &A ,const Eigen::VectorX
       for (int j=0;j<m;++j){
         if (z(j)<0 && tmin<d(j)) tmin=d(j);
         if (z(j)>0 && tmax>d(j)) tmax=d(j);
-     }
+      }
       tmin=std::min(0.0, tmin);
       tmax=std::max(0.0, tmax);
 
@@ -163,7 +192,7 @@ Eigen::MatrixXd cpgs(const int N, const Eigen::MatrixXd &A ,const Eigen::VectorX
       d2 =d2- W.col(i)*delta; //we do this to avoid making a matrix
       //multiplication for each parameter (we just update the value of the
       //constraint with the delta of parameter)
-}
+    }
     x=T1*y;
 
     if (stage==0){//still in updating phase
@@ -233,6 +262,7 @@ using Eigen::FullPivLU;
 //' @param v a vector of length equals to nrow(C)
 //' @param x0 a vector of length equals to ncol(A) that should be in the polytope, for example returned by \code{\link{chebycenter}}
 //' @param thin the thinning interval
+//' @param test if true, tryes a method to decrease autocorrelation
 //'
 //' @section Details:
 //' This function is based on an initial matlab code developped called CPRND
@@ -260,7 +290,7 @@ using Eigen::FullPivLU;
 Eigen::MatrixXd cpgsEquality(const int N, const Eigen::MatrixXd &A,
                              const Eigen::VectorXd &b, const Eigen::MatrixXd &C,
                              const Eigen::VectorXd &v, const Eigen::VectorXd &x0,
-                             const int thin=1){
+                             const int thin=1, const bool test=false){
   int p=A.cols();
   int m=A.rows();
   int p2=C.cols();
@@ -282,7 +312,7 @@ Eigen::MatrixXd cpgsEquality(const int N, const Eigen::MatrixXd &A,
   VectorXd bbis=b-A*x0;
 
   VectorXd x0bis=VectorXd::Zero(Nt.cols());
-  MatrixXd x=cpgs(N, Abis, bbis, x0bis, thin);
+  MatrixXd x=cpgs(N, Abis, bbis, x0bis, thin,test);
   for(int i=0;i<N;++i) {
     X.row(i)=Nt*x.row(i).transpose()+x0;
   }

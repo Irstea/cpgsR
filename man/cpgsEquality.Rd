@@ -5,7 +5,7 @@
 \title{Complex Polytope Gibbs Sampling
 This function draw uniform samples in a convex polytope with both equality and inequality constraints}
 \usage{
-cpgsEquality(N, A, b, C, v, x0, thin = 1L)
+cpgsEquality(N, A, b, C, v, x0, thin = 1L, test = FALSE)
 }
 \arguments{
 \item{N}{the number of samples to generate}
@@ -21,6 +21,8 @@ cpgsEquality(N, A, b, C, v, x0, thin = 1L)
 \item{x0}{a vector of length equals to ncol(A) that should be in the polytope, for example returned by \code{\link{chebycenter}}}
 
 \item{thin}{the thinning interval}
+
+\item{test}{if true, tryes a method to decrease autocorrelation}
 }
 \value{
 a matrix with one row per sample and one column per parameter

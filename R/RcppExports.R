@@ -9,6 +9,7 @@
 #' @param b a vector of length equals to nrow(A)
 #' @param x0 a vector of length equals to nrcol(A) that should be in the polytope, for example returned by \code{\link{chebycenter}}
 #' @param thin thinning interval
+#' @param test if true, tryes a method to decrease autocorrelation
 #'
 #' @section Details:
 #' This function is based on an initial matlab code developped called CPRND
@@ -28,8 +29,8 @@
 #' x <- cpgs(1000,A,b,X0)
 #' @export
 #' @useDynLib cpgsR
-cpgs <- function(N, A, b, x0, thin = 1L) {
-    .Call('_cpgsR_cpgs', PACKAGE = 'cpgsR', N, A, b, x0, thin)
+cpgs <- function(N, A, b, x0, thin = 1L, test = FALSE) {
+    .Call('_cpgsR_cpgs', PACKAGE = 'cpgsR', N, A, b, x0, thin, test)
 }
 
 #' Complex Polytope Gibbs Sampling
@@ -42,6 +43,7 @@ cpgs <- function(N, A, b, x0, thin = 1L) {
 #' @param v a vector of length equals to nrow(C)
 #' @param x0 a vector of length equals to ncol(A) that should be in the polytope, for example returned by \code{\link{chebycenter}}
 #' @param thin the thinning interval
+#' @param test if true, tryes a method to decrease autocorrelation
 #'
 #' @section Details:
 #' This function is based on an initial matlab code developped called CPRND
@@ -63,8 +65,8 @@ cpgs <- function(N, A, b, x0, thin = 1L) {
 #' x <- cpgsEquality(1000,A,b,C,v,X0)
 #' @export
 #' @useDynLib cpgsR
-cpgsEquality <- function(N, A, b, C, v, x0, thin = 1L) {
-    .Call('_cpgsR_cpgsEquality', PACKAGE = 'cpgsR', N, A, b, C, v, x0, thin)
+cpgsEquality <- function(N, A, b, C, v, x0, thin = 1L, test = FALSE) {
+    .Call('_cpgsR_cpgsEquality', PACKAGE = 'cpgsR', N, A, b, C, v, x0, thin, test)
 }
 
 # Register entry points for exported C++ functions

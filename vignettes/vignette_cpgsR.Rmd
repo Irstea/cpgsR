@@ -325,7 +325,7 @@ We can now compare the sampling using example from the \code{\link{[limSolve]xsa
 
 
 
-```{r}
+```{r, eval=FALSE}
 if (require("limSolve")) {
   #test
   E <- rbind(Minkdiet$Prey, rep(1, 7))
